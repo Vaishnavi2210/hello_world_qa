@@ -30,11 +30,6 @@ class TestTranslation extends PHPUnit_Framework_TestCase
         $capabilities = DesiredCapabilities::firefox();
         $this->driver = RemoteWebDriver::create($host, $capabilities, 5000);
         $this->driver->manage()->window()->maximize();
-
-        $this->driver->get($this->googleTranslateUrl);
-
-
-
     }
 
     public function tearDown()
@@ -82,6 +77,9 @@ class TestTranslation extends PHPUnit_Framework_TestCase
             3,
             "The given word is too short"
         );
+
+        //Go to google translate site
+        $this->driver->get($this->googleTranslateUrl);
 
         //set the google autodetect language option
         $autoDetectLanguage->click();
