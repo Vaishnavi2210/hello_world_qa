@@ -1,0 +1,23 @@
+{
+  "name": "Netex/HelloWorldQA",
+
+  "description": "Hello World QA API",
+  "minimum-stability": "stable",
+  "authors": [
+    {
+      "name": "Netex QA team",
+      "email": "office@netex.ro"
+    }
+  ],
+
+  "require": {
+    "facebook/webdriver": "dev-master",
+    "phpunit/phpunit": "5.0"
+  },
+
+  "autoload": {
+    "classmap": [
+      "src/"
+    ]
+  }
+}
