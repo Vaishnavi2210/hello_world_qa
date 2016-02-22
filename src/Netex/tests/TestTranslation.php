@@ -26,7 +26,7 @@ class TestTranslation extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         //Create selenium session
-        $host = 'http://testing.local:4444/wd/hub';
+        $host = 'http://localhost:4444/wd/hub';
         $capabilities = DesiredCapabilities::firefox();
         $this->driver = RemoteWebDriver::create($host, $capabilities, 5000);
         $this->driver->manage()->window()->maximize();
@@ -41,6 +41,10 @@ class TestTranslation extends PHPUnit_Framework_TestCase
 
     public function testWord()
     {
+
+        //Go to google translate site
+        $this->driver->get($this->googleTranslateUrl);
+
         //Selenium web elements
         $autoDetectLanguage = $this->driver->findElement(
             WebDriverBy::xpath(
@@ -73,13 +77,10 @@ class TestTranslation extends PHPUnit_Framework_TestCase
 
         //assert that the $word(string) length is equal or greater than 3 chars
         $this->assertGreaterThanOrEqual(
-            strlen($word),
             3,
+            strlen($word),
             "The given word is too short"
         );
-
-        //Go to google translate site
-        $this->driver->get($this->googleTranslateUrl);
 
         //set the google autodetect language option
         $autoDetectLanguage->click();

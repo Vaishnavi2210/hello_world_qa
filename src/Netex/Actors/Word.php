@@ -29,14 +29,18 @@ class Word
     }
 
     private function test(){
+
+        $pass = false;
+
         $phpunit = new PHPUnit_TextUI_TestRunner();
 
         try {
-            $phpunit->doRun($phpunit->getTest(null, dirname(__DIR__).'/tests/TestTranslation.php'),  array("printer"=>(new NoOutputPhpUnit())));
+            $testResult = $phpunit->doRun($phpunit->getTest(null, dirname(__DIR__).'/tests/TestTranslation.php'),  array("printer"=>(new NoOutputPhpUnit())));
+            $pass = $testResult->wasSuccessful();
         } catch (PHPUnit_Framework_Exception $e) {
-            print $e->getMessage() . "\n";
-            die ("Unit tests failed.");
         }
+
+        return $pass;
     }
 
     public function act($word){
@@ -46,9 +50,12 @@ class Word
         if($created){
             $world = new World();
             $word = $world->getLatestRecord();
-            $this->test();
 
-            echo $word." created";
+            if($this->test()) {
+                echo "$word means world";
+            }
+            else echo "<p>$word doesn't mean world!</p></br>\n";
+
             $actFine = true;
         }
 
