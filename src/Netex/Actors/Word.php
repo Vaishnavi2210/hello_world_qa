@@ -32,7 +32,7 @@ class Word
         $phpunit = new PHPUnit_TextUI_TestRunner();
 
         try {
-            $phpunit->doRun($phpunit->getTest(dirname(__DIR__).'/tests/TestTranslation.php'),  array("printer"=>(new NoOutputPhpUnit())));
+            $phpunit->doRun($phpunit->getTest(null, dirname(__DIR__).'/tests/TestTranslation.php'),  array("printer"=>(new NoOutputPhpUnit())));
         } catch (PHPUnit_Framework_Exception $e) {
             print $e->getMessage() . "\n";
             die ("Unit tests failed.");
