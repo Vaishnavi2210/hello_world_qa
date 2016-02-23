@@ -15,13 +15,15 @@ use WebDriverBy;
 
 class TestTranslation extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var string
+     */
     private $googleTranslateUrl = 'https://translate.google.com/';
 
     /**
      * @var RemoteWebDriver
      */
     private $driver;
-
 
     public function setUp()
     {
@@ -38,72 +40,64 @@ class TestTranslation extends PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
-
     public function testWord()
     {
+        //Get the last inserted entry from the database
+        $world = new World();
+        $word = $world->getLatestRecord();
+
+        //assert that the $word(string) is not empty
+        $this->assertNotEmpty($word,
+            "Last database record is empty. Please insert a word in the database!"
+        );
 
         //Go to google translate site
         $this->driver->get($this->googleTranslateUrl);
 
-        //Selenium web elements
+        //Set the google autodetect language option
         $autoDetectLanguage = $this->driver->findElement(
             WebDriverBy::xpath(
                 "//div[contains(@id,'gt-lang-left')]//div[contains(@class,'gt-lang-sugg-message')]/div[contains(@value,'auto')]"
             )
         );
+        $autoDetectLanguage->click();
+
+        //Set the google translation language
         $translateToEn = $this->driver->findElement(
             WebDriverBy::xpath(
                 "//div[contains(@id,'gt-lang-right')]//div[contains(@class,'gt-lang-sugg-message')]/div[contains(@value,'en')]"
             )
         );
-        $submitTranslate = $this->driver->findElement(
-            WebDriverBy::xpath("//div[contains(@id,'gt-lang-submit')]/input"
-            )
-        );
+        $translateToEn->click();
+
+        //Insert the word you want translated
         $inputText = $this->driver->findElement(
             WebDriverBy::xpath(
                 "//div[contains(@id,'gt-src-wrap')]//textarea[contains(@class,'short_text')]"
             )
         );
+        $inputText->sendKeys($word);
+        
+        //Click on "Translate" button to translate the word inserted
+        $submitTranslate = $this->driver->findElement(
+            WebDriverBy::xpath("//div[contains(@id,'gt-lang-submit')]/input"
+            )
+        );
+        $submitTranslate->click();
+        sleep(2);
+
+        //Get the translated word
         $translatedText = $this->driver->findElement(
             WebDriverBy::xpath(
                 "//div[contains(@id,'gt-res-wrap')]//span[contains(@class,'short_text')]"
             )
         );
-
-        //Get the last inserted entry from the database
-        $world = new World();
-        $word = $world->getLatestRecord();
-
-        //assert that the $word(string) length is equal or greater than 3 chars
-        $this->assertGreaterThanOrEqual(
-            3,
-            strlen($word),
-            "The given word is too short"
-        );
-
-        //set the google autodetect language option
-        $autoDetectLanguage->click();
-
-        //set the google translation language
-        $translateToEn->click();
-
-        //Insert the word you want translated
-        $inputText->sendKeys($word);
-
-        //click on "Translate" button to translate the word inserted
-        $submitTranslate->click();
-        sleep(2);
-
-        //get the translated word
         $actualText = $translatedText->getText();
 
-        //assert that the translated word means "world"
-        $this->assertEquals(
-            strtolower("World"),
-            strtolower($actualText),
-            "The word that you translated does not translate to 'world'"
+        //Assert that the translated word means "world"
+        $this->assertTrue(
+            'world' === strtolower($actualText) || 'the world' === strtolower($actualText),
+            "The word that you translated does not translate to 'world' or 'the world'."
         );
     }
-
 }
